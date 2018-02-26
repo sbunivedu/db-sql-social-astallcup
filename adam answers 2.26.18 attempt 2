@@ -1,0 +1,59 @@
+1
+select name
+from Highschooler
+where ID in(select ID1
+from Highschooler, Friend
+where ID=ID2
+and name = "Gabriel");
+
+2
+select name, Grade
+from Highschooler
+where ID Not IN(
+select ID1
+from Likes
+union
+select ID2
+from Likes);
+
+3
+select name,grade
+from Highschooler
+where ID IN(
+SELECT ID2 
+FROM Likes
+GROUP BY ID2 having count(*) > 1);
+inner query gives ID's for students that are liked by more than one student, and the outter
+query selects the name and grade of that student. 
+
+
+I still can not get this one, this is the one we dicussed on monday.  you said to move
+the query to the from line, but then how do we do the >2???
+select name,grade
+from Highschooler, Likes,(
+select ID2, count(*) from Likes
+group by ID2
+where ID = ID2
+and ;
+
+4
+select older.name nameOlder, older.grade, Highschooler.name nameyounger,Highschooler.grade
+from Highschooler,(select ID1, ID2, name, grade
+from Highschooler,Likes
+where ID = ID1) older
+where older.ID2=Highschooler.ID
+and (older.grade-Highschooler.grade)>1;
+
+or do it this way
+select HSOLD.name, HSOLD.grade, HSYoung.name, HSYoung.grade
+from Highschooler HSOLD, Highschooler HSYoung, Likes
+where HSOLD.ID = Likes.ID1
+and HSYoung.ID = Likes.ID2
+and (HSOLD.grade - HSYoung.grade)>1;
+
+8
+select avg(avgs.a) as 'average # friends'
+from(
+select id1, count(*) as a
+from Friend
+group by ID1)avgs;
